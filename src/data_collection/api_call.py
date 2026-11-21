@@ -44,12 +44,15 @@ def query_api(drug):
 def collect_data(drug_list):
     for drug in drug_list[:10]:
         df = query_api(drug)
-        if drug == 
-    return ...
+        if drug == 'Agomelatine':
+            master_df = df
+        else:
+            master_df = pd.concat([master_df,df])
+    return master_df
 
 def main():
     drug_list = read_antidepressant()
-    collect_data(drug_list)
+    data = collect_data(drug_list)
     
 
     
