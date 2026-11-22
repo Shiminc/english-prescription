@@ -24,6 +24,50 @@ def read_antidepressant():
     # return string_literal
     return list(data['Antidepressant'])
 
+def query_gp():
+    query = "SELECT DISTINCT practice_name,practice_code,address_1, address_2, address_3, address_4,postcode " \
+            f"FROM `{resource_name}` " \
+
+    api_call = f"{base_endpoint}" \
+               f"{action_method}" \
+               "resource_id=" \
+                    f"{resource_name}" \
+               "&" \
+               "sql=" \
+                    f"{query}"
+    response = requests.get(api_call).json()
+    if response['success']:
+        print('success')
+
+        df  = pd.json_normalize(response['result']['result']['records'])
+    else:
+        print('failed')
+        df = pd.DataFrame()
+    return df
+
+def complex_query_api(drug):
+    query = "SELECT bnf_chemical_substance,practice_name,practice_code,icb_name,pco_name, SUM(ITEMS) AS TOTAL_by_item " \
+            f"FROM `{resource_name}` " \
+            f"WHERE bnf_chemical_substance = '{drug}'" \
+            f"GROUP BY bnf_chemical_substance,practice_name,practice_code,icb_name,pco_name"
+
+    api_call = f"{base_endpoint}" \
+               f"{action_method}" \
+               "resource_id=" \
+                    f"{resource_name}" \
+               "&" \
+               "sql=" \
+                    f"{query}"
+    response = requests.get(api_call).json()
+    if response['success']:
+        print('success',drug)
+
+        df  = pd.json_normalize(response['result']['result']['records'])
+    else:
+        print('failed',drug)
+        df = pd.DataFrame()
+    return df
+
 def query_api(drug):
     query = "SELECT * " \
             f"FROM `{resource_name}` " \
@@ -39,11 +83,12 @@ def query_api(drug):
     response = requests.get(api_call).json()
     if response['success']:
         df  = pd.json_normalize(response['result']['result']['records'])
+    
     return df
 
 def collect_data(drug_list):
     for drug in drug_list[:10]:
-        df = query_api(drug)
+        df = complex_query_api(drug)
         if drug == 'Agomelatine':
             master_df = df
         else:
@@ -51,10 +96,10 @@ def collect_data(drug_list):
     return master_df
 
 def main():
-    drug_list = read_antidepressant()
-    data = collect_data(drug_list)
-    
-
+    # drug_list = read_antidepressant()
+    # data = collect_data(drug_list)
+    # data = complex_query_api('Citalopram hydrobromide')
+    # data = query_gp()
     
     print('finish')
 
