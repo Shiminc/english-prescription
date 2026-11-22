@@ -221,3 +221,6 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
+
+# Big files
+data/Integrated_Care_Boards_April_2026_Boundaries_EN_BFC_-182355161211007991.geojson
