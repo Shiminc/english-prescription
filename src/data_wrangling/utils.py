@@ -5,6 +5,7 @@ import altair as alt
 
 path_antidepressant = './data/antidepressant_prescribed'
 path_all_drugs = './data/all_drugs_prescribed_by_practices_202604_09.csv'
+path_patients = './data/gp-reg-pat-prac-sing-age-region.csv'
 
 def all_drugs():
     data = pd.read_csv(path_all_drugs)
@@ -21,6 +22,8 @@ def collate_all_antidepressant_data():
         data = pd.read_csv(file)
         data['year_month']=yearmonth.group()
         master_df = pd.concat([master_df,data])
+
+    master_df ['year_month'] = pd.to_datetime(master_df['year_month'], format='%Y%m')
 
     # drop the first column which is the unnamed index from the csv
     master_df = master_df.iloc[:,1:]
@@ -50,7 +53,7 @@ def combine_drugs(df):
     doxepin_df = pd.DataFrame(doxepin_df.reset_index())
 
     master_df = pd.concat([master_df, citalopram_df, doxepin_df])
-    return master_df
+    return master_df.reset_index()
 
 def set_up_altair_browser():
     alt.renderers.enable('browser')

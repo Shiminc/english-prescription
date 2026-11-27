@@ -46,9 +46,9 @@ def query_gp():
     return df
 
 def get_overall_drug_api(resource):
-    query = "SELECT year_month, practice_name,practice_code,icb_name,pco_name, SUM(ITEMS) AS TOTAL_by_item " \
+    query = "SELECT year_month, practice_name,practice_code,icb_name,icb_code,pco_name, SUM(ITEMS) AS TOTAL_by_item " \
             f"FROM `{resource}` " \
-            f"GROUP BY year_month, practice_name,practice_code,icb_name,pco_name"
+            f"GROUP BY year_month, practice_name,practice_code,icb_name,icb_code,pco_name"
 
     api_call = f"{base_endpoint}" \
                f"{action_method}" \
